@@ -4,15 +4,16 @@ package consts
 type Role string
 
 const (
-	RoleAdmin  Role = "admin"  // 系統管理員
-	RoleUser   Role = "user"   // 一般用戶
-	RoleDriver Role = "driver" // 司機
+	RoleAdmin   Role = "admin"   // 系統管理員
+	RoleUser    Role = "user"    // 一般用戶
+	RoleVehicle Role = "vehicle" // 車輛
+	RoleDevice  Role = "device"  // 設備
 )
 
 // IsValid 驗證角色是否有效
 func (r Role) IsValid() bool {
 	switch r {
-	case RoleAdmin, RoleUser, RoleDriver:
+	case RoleAdmin, RoleUser, RoleVehicle, RoleDevice:
 		return true
 	default:
 		return false
