@@ -23,6 +23,9 @@ vendor/
 go.work
 go.work.sum
 
+# Go dependencies
+go.sum
+
 # env file
 .env
 
