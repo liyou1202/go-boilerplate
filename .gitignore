@@ -32,6 +32,7 @@ go.sum
 # Editor/IDE
 .idea/
 .vscode/
+.run/
 
 # AI tools
 .claude/
