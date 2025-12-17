@@ -8,16 +8,18 @@ import (
 
 // Claims JWT 自定義聲明
 type Claims struct {
-	UserID string `json:"user_id"`
-	Role   string `json:"role"`
+	UserID   string `json:"userId"`
+	Username string `json:"username"`
+	RoleId   string `json:"roleId"`
 	jwt.RegisteredClaims
 }
 
 // Generate 生成 JWT Token
-func Generate(userID, role, secret string, expireHours int) (string, error) {
+func Generate(userID, username, roleID, secret string, expireHours int) (string, error) {
 	claims := Claims{
-		UserID: userID,
-		Role:   role,
+		UserID:   userID,
+		Username: username,
+		RoleId:   roleID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expireHours) * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

@@ -26,7 +26,7 @@ func HandleError(c *gin.Context, err error) {
 
 	// 一般錯誤
 	c.JSON(http.StatusInternalServerError, Response{
-		Code:    CodeInternalError,
+		Code:    ErrInternalError,
 		Message: err.Error(),
 	})
 }
@@ -40,20 +40,27 @@ func Success(c *gin.Context, data interface{}) {
 	})
 }
 
-// getHTTPStatus 根據錯誤碼取得 HTTP 狀態碼
+//	 Mapping rules:
+//		code 0: Success → 200 OK
+//		code 1-999: Application errors → 400 Bad Request (client errors)
+//		code >1000: Infrastructure errors → 500 Internal Server Error
+//		1000-1099: Database errors (MySQL, MongoDB, Redis)
+//		1100-1999: Reserved for other infrastructure
+//		2000-2099: AWS services (S3, etc.)
+//		2100-2199: External APIs
+// getHTTPStatus 粗略劃分若需要更細節則需要維護 error code 與 http code 的 mapping
 func getHTTPStatus(code int) int {
-	switch {
-	case code >= 20001 && code <= 20099:
-		return http.StatusUnauthorized
-	case code == CodeForbidden:
-		return http.StatusForbidden
-	case code == CodeNotFound:
-		return http.StatusNotFound
-	case code == CodeInvalidParams:
-		return http.StatusBadRequest
-	case code == CodeAlreadyExists:
-		return http.StatusConflict
-	default:
-		return http.StatusInternalServerError
+	// Success
+	if code == CodeSuccess {
+		return http.StatusOK
 	}
+
+	// Application errors (1-999)
+	if code >= 1 && code <= 999 {
+		// Default: client error
+		return http.StatusBadRequest
+	}
+
+	// Unknown error
+	return http.StatusInternalServerError // 500
 }
