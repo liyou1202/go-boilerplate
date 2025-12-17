@@ -19,9 +19,16 @@ func main() {
 	}
 
 	// 初始化 Logger
-	logLevel := configs.GetString("log.level")
-	logFormat := configs.GetString("log.format")
-	if err := logger.Init(logLevel, logFormat); err != nil {
+	logCfg := &logger.Config{
+		Level:      configs.GetString("log.level"),
+		Format:     configs.GetString("log.format"),
+		OutputPath: configs.GetString("log.outputPath"),
+		MaxSize:    configs.GetInt("log.maxSize"),
+		MaxBackups: configs.GetInt("log.maxBackups"),
+		MaxAge:     configs.GetInt("log.maxAge"),
+		Compress:   configs.GetBool("log.compress"),
+	}
+	if err := logger.InitWithConfig(logCfg); err != nil {
 		fmt.Printf("Failed to init logger: %v\n", err)
 		os.Exit(1)
 	}

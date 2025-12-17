@@ -8,8 +8,14 @@ debug = true
 
 [log]
 level = "debug"
-format = "json"
+format = "console"  # 使用 console 格式，帶顏色輸出
 output = "stdout"
+# 可選：同時輸出到檔案
+outputPath = "logs/app.log"  # 日誌檔案路徑
+maxSize = 100                # 單個檔案最大 100MB
+maxBackups = 3               # 保留 3 個備份
+maxAge = 7                   # 保留 7 天
+compress = true              # 壓縮舊日誌
 
 [mysql]
 host = "localhost"
