@@ -1,104 +1,96 @@
-.PHONY: help build test clean
+.PHONY: help wire build run test clean
 .PHONY: loc-infra loc-backend loc-all
 .PHONY: dev-infra dev-backend dev-all
 .PHONY: prod-infra prod-backend prod-all
 .PHONY: down logs
 
-COMPOSE_FILE := deployments/docker-compose.yml
+# ==================== Help ====================
 
 help:
 	@echo "SyncDrive Backend - Available Commands"
 	@echo ""
+	@echo "Development:"
+	@echo "  make wire           - Generate Wire dependency injection code"
+	@echo "  make build          - Build application binary"
+	@echo "  make run            - Run API server directly (ENV=loc)"
+	@echo "  make test           - Run tests"
+	@echo "  make clean          - Clean build artifacts and logs"
+	@echo ""
 	@echo "Local Development (loc):"
-	@echo "  make loc-infra      - Start infrastructure only (MySQL, MongoDB, Redis, MQTT)"
-	@echo "  make loc-backend    - Run API server locally (go run)"
+	@echo "  make loc-infra      - Start infrastructure only"
+	@echo "  make loc-backend    - Run API server with go run"
 	@echo "  make loc-all        - Start all services with docker-compose"
 	@echo ""
 	@echo "Development Environment (dev):"
-	@echo "  make dev-infra      - Start infrastructure only"
+	@echo "  make dev-infra      - Start infrastructure"
 	@echo "  make dev-backend    - Start API with docker-compose"
 	@echo "  make dev-all        - Start all services"
 	@echo ""
 	@echo "Production Environment (prod):"
-	@echo "  make prod-infra     - Start infrastructure only"
+	@echo "  make prod-infra     - Start infrastructure"
 	@echo "  make prod-backend   - Start API with docker-compose"
 	@echo "  make prod-all       - Start all services"
 	@echo ""
 	@echo "Utilities:"
-	@echo "  make build          - Build application binary"
-	@echo "  make test           - Run tests"
 	@echo "  make down           - Stop all docker services"
 	@echo "  make logs           - View docker logs"
-	@echo "  make clean          - Clean build artifacts"
+
+# ==================== Development ====================
+
+wire:
+	cd cmd/api && wire
+
+build:
+	mkdir -p bin
+	go build -ldflags="-w -s" -o bin/api ./cmd/api/
+
+run:
+	ENV=loc go run ./cmd/api/
+
+test:
+	go test -v -race ./...
+
+clean:
+	rm -rf bin/
+	rm -rf logs/*
 
 # ==================== Local Development (loc) ====================
 
 loc-infra:
-	@echo "Starting infrastructure (loc)..."
-	@cd deployments && docker-compose --profile infra up -d
-	@echo "Infrastructure started. Services available at localhost"
+	cd deployments && docker-compose --profile infra up -d
 
 loc-backend:
-	@echo "Running API server locally (ENV=loc)..."
-	@ENV=loc go run cmd/api/main.go
+	ENV=loc go run ./cmd/api/
 
 loc-all:
-	@echo "Starting all services (loc)..."
-	@cd deployments && docker-compose --profile infra --profile backend up -d
-	@echo "All services started"
+	cd deployments && docker-compose --profile infra --profile backend up -d
 
 # ==================== Development Environment (dev) ====================
 
 dev-infra:
-	@echo "Starting infrastructure (dev)..."
-	@cd deployments && ENV=dev docker-compose --profile infra up -d
-	@echo "Infrastructure started"
+	cd deployments && ENV=dev docker-compose --profile infra up -d
 
 dev-backend:
-	@echo "Starting API server (dev)..."
-	@cd deployments && ENV=dev GIN_MODE=debug docker-compose --profile backend up -d
-	@echo "API server started"
+	cd deployments && ENV=dev GIN_MODE=debug docker-compose --profile backend up -d
 
 dev-all:
-	@echo "Starting all services (dev)..."
-	@cd deployments && ENV=dev GIN_MODE=debug docker-compose --profile infra --profile backend up -d
-	@echo "All services started"
+	cd deployments && ENV=dev GIN_MODE=debug docker-compose --profile infra --profile backend up -d
 
 # ==================== Production Environment (prod) ====================
 
 prod-infra:
-	@echo "Starting infrastructure (prod)..."
-	@cd deployments && ENV=prod docker-compose --profile infra up -d
-	@echo "Infrastructure started"
+	cd deployments && ENV=prod docker-compose --profile infra up -d
 
 prod-backend:
-	@echo "Starting API server (prod)..."
-	@cd deployments && ENV=prod GIN_MODE=release docker-compose --profile backend up -d
-	@echo "API server started"
+	cd deployments && ENV=prod GIN_MODE=release docker-compose --profile backend up -d
 
 prod-all:
-	@echo "Starting all services (prod)..."
-	@cd deployments && ENV=prod GIN_MODE=release docker-compose --profile infra --profile backend up -d
-	@echo "All services started"
+	cd deployments && ENV=prod GIN_MODE=release docker-compose --profile infra --profile backend up -d
 
 # ==================== Utilities ====================
 
-build:
-	@mkdir -p bin
-	@go build -ldflags="-w -s" -o bin/api cmd/api/main.go
-	@echo "Build complete: bin/api"
-
-test:
-	@go test -v -race ./...
-
 down:
-	@echo "Stopping all services..."
-	@cd deployments && docker-compose --profile infra --profile backend down
-	@echo "Services stopped"
+	cd deployments && docker-compose --profile infra --profile backend down
 
 logs:
-	@cd deployments && docker-compose logs -f
-
-clean:
-	@rm -rf bin/ logs/*
-	@echo "Clean complete"
+	cd deployments && docker-compose logs -f
