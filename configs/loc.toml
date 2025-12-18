@@ -8,35 +8,34 @@ debug = true
 
 [log]
 level = "debug"
-format = "console"  # 使用 console 格式，帶顏色輸出
+format = "console"
 output = "stdout"
-# 可選：同時輸出到檔案
-outputPath = "logs/app.log"  # 日誌檔案路徑
-maxSize = 100                # 單個檔案最大 100MB
-maxBackups = 3               # 保留 3 個備份
-maxAge = 7                   # 保留 7 天
-compress = true              # 壓縮舊日誌
+outputPath = "logs/app.log"
+maxSize = 100
+maxBackups = 3
+maxAge = 7
+compress = true
 
 [mysql]
 host = "localhost"
 port = 3306
-database = "sync_drive"
-username = "root"
-password = "root"
+database = "syncdrive"
+username = "syncdrive_user"
+password = "syncdrive_password"
 charset = "utf8mb4"
 parseTime = true
 maxIdleConns = 10
 maxOpenConns = 100
 
 [mongodb]
-uri = "mongodb://localhost:27017"
-database = "sync_drive"
+uri = "mongodb://admin:admin_password@localhost:27017"
+database = "syncdrive"
 timeout = 10
 
 [redis]
 host = "localhost"
 port = 6379
-password = ""
+password = "redis_password"
 db = 0
 poolSize = 10
 
