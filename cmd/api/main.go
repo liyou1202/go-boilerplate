@@ -20,6 +20,34 @@ func main() {
 		os.Exit(1)
 	}
 
+	// 檢查外部服務連線狀態
+	pingCtx, pingCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer pingCancel()
+
+	// 檢查 MySQL
+	sqlDB, err := app.MySQL.DB()
+	if err != nil {
+		app.Logger.Error("Failed to get underlying sql.DB from gorm", zap.Error(err))
+	} else if err := sqlDB.PingContext(pingCtx); err != nil {
+		app.Logger.Error("MySQL connection failed", zap.Error(err))
+	} else {
+		app.Logger.Info("MySQL connection successful")
+	}
+
+	// 檢查 MongoDB
+	if err := app.MongoDB.Client().Ping(pingCtx, nil); err != nil {
+		app.Logger.Error("MongoDB connection failed", zap.Error(err))
+	} else {
+		app.Logger.Info("MongoDB connection successful")
+	}
+
+	// 檢查 Redis
+	if err := app.Redis.Ping(pingCtx).Err(); err != nil {
+		app.Logger.Error("Redis connection failed", zap.Error(err))
+	} else {
+		app.Logger.Info("Redis connection successful")
+	}
+
 	// 記錄啟動資訊
 	app.Logger.Info("Starting SyncDrive API Server",
 		zap.String("env", app.Config.GetString("app.env")),

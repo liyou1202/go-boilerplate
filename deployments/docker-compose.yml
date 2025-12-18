@@ -80,21 +80,32 @@ services:
     environment:
       ENV: ${ENV:-loc}
       GIN_MODE: ${GIN_MODE:-debug}
+      MYSQL_HOST: mysql
+      MONGODB_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-admin_password}@mongodb:27017/syncdrive?authSource=admin
+      REDIS_HOST: redis
+      MQTT_BROKER: tcp://mosquitto:1883
     ports:
       - "${API_PORT:-8080}:8080"
     volumes:
       - ../configs:/app/configs
       - ../logs/api:/app/logs
+    command: sh -c "sleep 5 && /app/api"
     depends_on:
       mysql:
         condition: service_healthy
       mongodb:
         condition: service_healthy
-      mosquitto:
-        condition: service_healthy
 
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/health",
+        ]
       interval: 30s
       timeout: 3s
       retries: 3

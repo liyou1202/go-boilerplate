@@ -17,7 +17,7 @@ maxAge = 7
 compress = true
 
 [mysql]
-host = "localhost"
+host = "mysql"
 port = 3306
 database = "syncdrive"
 username = "syncdrive_user"
@@ -28,19 +28,19 @@ maxIdleConns = 10
 maxOpenConns = 100
 
 [mongodb]
-uri = "mongodb://admin:admin_password@localhost:27017"
+uri = "mongodb://admin:admin_password@mongodb:27017"
 database = "syncdrive"
 timeout = 10
 
 [redis]
-host = "localhost"
+host = "redis"
 port = 6379
 password = "redis_password"
 db = 0
 poolSize = 10
 
 [mqtt]
-broker = "tcp://localhost:1883"
+broker = "tcp://mosquitto:1883"
 clientID = "sync-drive-backend-local"
 username = ""
 password = ""

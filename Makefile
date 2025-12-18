@@ -52,7 +52,7 @@ clean:
 
 loc-backend:
 	make wire
-	ENV=loc go run ./cmd/api/
+	ENV=loc GIN_MODE=debug go run ./cmd/api/
 
 loc-infra:
 	cd deployments && docker-compose --profile infra up -d
