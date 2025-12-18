@@ -38,7 +38,11 @@ help:
 # ==================== Development ====================
 
 wire:
-	cd cmd/api && wire
+	@if [ ! -f $(HOME)/go/bin/wire ]; then \
+		echo "Wire not found, installing..."; \
+		go install github.com/google/wire/cmd/wire@latest; \
+	fi
+	cd cmd/api && $(HOME)/go/bin/wire
 
 build:
 	mkdir -p bin
