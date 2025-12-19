@@ -1,0 +1,58 @@
+# 開發環境配置
+
+[app]
+name = "sync-drive-backend"
+env = "development"
+port = 8080
+debug = true
+
+[log]
+level = "info"
+format = "json"  # 使用 json 格式，便於日誌收集系統解析
+output = "stdout"
+outputPath = "logs/app.log"
+maxSize = 100
+maxBackups = 5
+maxAge = 14
+compress = true
+
+[mysql]
+host = "mysql"
+port = 3306
+database = "syncdrive"
+username = "syncdrive_user"
+password = "syncdrive_password"
+charset = "utf8mb4"
+parseTime = true
+maxIdleConns = 10
+maxOpenConns = 100
+
+[mongodb]
+uri = "mongodb://admin:admin_password@mongodb:27017"
+database = "syncdrive"
+timeout = 10
+
+[redis]
+host = "redis"
+port = 6379
+password = "redis_password"
+db = 0
+poolSize = 10
+
+[mqtt]
+broker = "tcp://mosquitto:1883"
+clientID = "sync-drive-backend-dev"
+username = ""
+password = ""
+qos = 1
+
+[jwt]
+secret = "your-secret-key-change-in-production"
+expireHours = 24
+refreshExpireHours = 168
+
+[s3]
+region = "ap-northeast-1"
+bucket = "sync-drive-dev"
+accessKeyID = ""
+secretAccessKey = ""
